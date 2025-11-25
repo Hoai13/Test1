@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khai Báo Thông Tin Tốt Nghiệp</title>
+    <!-- Sử dụng Tailwind CSS để làm đẹp nhanh chóng -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CSS để hiển thị thông báo lỗi validation */
+        .field-error {
+            color: red;
+            font-size: 0.875rem; /* text-sm */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="container mx-auto max-w-4xl p-8 my-10 bg-white rounded-lg shadow-xl">
+
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">
+        Khai Báo Thông Tin Tốt Nghiệp
+    </h1>
+
+    <!-- Hiển thị thông báo (nếu có) sau khi lưu thành công hoặc thất bại -->
+    <div th:if="${message_success}" class="mb-4 p-4 text-green-800 bg-green-100 border border-green-300 rounded-md">
+        <span th:text="${message_success}"></span>
+    </div>
+    <div th:if="${message_error}" class="mb-4 p-4 text-red-800 bg-red-100 border border-red-300 rounded-md">
+        <span th:text="${message_error}"></span>
+    </div>
+
+    <!--
+        Form binding với DTO "totNghiepForm"
+        th:object: Đối tượng DTO
+        th:action: URL xử lý khi nhấn submit (POST)
+    -->
+    <form th:object="${totNghiepForm}" th:action="@{/sinh-vien/luu-thong-tin}" method="POST" class="space-y-6">
+
+        <!-- ===== PHẦN 1: THÔNG TIN SINH VIÊN ===== -->
+        <fieldset class="border border-gray-300 p-6 rounded-md">
+            <legend class="text-xl font-semibold text-gray-700 px-2">Thông Tin Sinh Viên</legend>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+
+                <!-- Số CMND (Yêu cầu 2.3) -->
+                <div>
+                    <label for="soCMND" class="block text-sm font-medium text-gray-700">
+                        Số CMND <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="soCMND" th:field="*{soCMND}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <!-- Hiển thị lỗi validation cho trường soCMND -->
+                    <span th.if="${#fields.hasErrors('soCMND')}" th:errors="*{soCMND}" class="field-error"></span>
+                </div>
+
+                <!-- Họ Tên -->
+                <div>
+                    <label for="hoTen" class="block text-sm font-medium text-gray-700">
+                        Họ Tên <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="hoTen" th:field="*{hoTen}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <span th.if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}" class="field-error"></span>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" th:field="*{email}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+
+                <!-- Số Điện Thoại -->
+                <div>
+                    <label for="soDT" class="block text-sm font-medium text-gray-700">Số Điện Thoại</label>
+                    <input type="text" id="soDT" th:field="*{soDT}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+
+                <!-- Địa Chỉ (làm 1 cột) -->
+                <div class="md:col-span-2">
+                    <label for="diaChi" class="block text-sm font-medium text-gray-700">Địa Chỉ</label>
+                    <input type="text" id="diaChi" th:field="*{diaChi}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ===== PHẦN 2: THÔNG TIN TỐT NGHIỆP ===== -->
+        <fieldset class="border border-gray-300 p-6 rounded-md">
+            <legend class="text-xl font-semibold text-gray-700 px-2">Thông Tin Tốt Nghiệp</legend>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+
+                <!-- ComboBox Trường (Yêu cầu 2.2) -->
+                <div>
+                    <label for="maTruong" class="block text-sm font-medium text-gray-700">
+                        Trường Tốt Nghiệp <span class="text-red-500">*</span>
+                    </label>
+                    <select id="maTruong" th:field="*{maTruong}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="">-- Chọn Trường --</option>
+                        <!-- Dùng th:each để lặp qua "dsTruong" từ Controller -->
+                        <option th:each="truong : ${dsTruong}"
+                                th:value="${truong.maTruong}"
+                                th:text="${truong.tenTruong}">
+                        </option>
+                    </select>
+                    <span th.if="${#fields.hasErrors('maTruong')}" th:errors="*{maTruong}" class="field-error"></span>
+                </div>
+
+                <!-- ComboBox Ngành (Yêu cầu 2.2) -->
+                <div>
+                    <label for="maNganh" class="block text-sm font-medium text-gray-700">
+                        Ngành Tốt Nghiệp <span class="text-red-500">*</span>
+                    </label>
+                    <select id="maNganh" th:field="*{maNganh}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="">-- Chọn Ngành --</option>
+                        <!-- Dùng th:each để lặp qua "dsNganh" từ Controller -->
+                        <option th:each="nganh : ${dsNganh}"
+                                th:value="${nganh.maNganh}"
+                                th:text="${nganh.tenNganh}">
+                        </option>
+                    </select>
+                    <span th.if="${#fields.hasErrors('maNganh')}" th:errors="*{maNganh}" class="field-error"></span>
+                </div>
+
+                <!-- Ngày Tốt Nghiệp (Yêu cầu 2.4) -->
+                <div>
+                    <label for="ngayTN" class="block text-sm font-medium text-gray-700">
+                        Ngày Tốt Nghiệp <span class="text-red-500">*</span>
+                    </label>
+                    <!-- Quan trọng: Dùng type="date" -->
+                    <input type="date" id="ngayTN" th:field="*{ngayTN}"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    <span th.if="${#fields.hasErrors('ngayTN')}" th:errors="*{ngayTN}" class="field-error"></span>
+                </div>
+
+                <!-- Hệ Tốt Nghiệp -->
+                <div>
+                    <label for="heTN" class="block text-sm font-medium text-gray-700">Hệ Tốt Nghiệp</label>
+                    <input type="text" id="heTN" th:field="*{heTN}" placeholder="Ví dụ: Chính quy"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+
+                <!-- Loại Tốt Nghiệp -->
+                <div class="md:col-span-2">
+                    <label for="loaiTN" class="block text-sm font-medium text-gray-700">Loại Tốt Nghiệp</label>
+                    <input type="text" id="loaiTN" th:field="*{loaiTN}" placeholder="Ví dụ: Giỏi, Khá..."
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Nút Submit -->
+        <div class="flex justify-end pt-4">
+            <button type="submit"
+                    class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Lưu Thông Tin
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

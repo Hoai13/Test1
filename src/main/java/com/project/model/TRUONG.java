@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Truong {
+public class TRUONG {
 
   @Id
   @Column(name = "MaTruong")

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.util.List; // Import
 
 @Entity
 @Table(name = "SINHVIEN")
@@ -27,4 +28,16 @@ public class SINHVIEN {
 
   @Column(name = "DiaChi")
   private String diaChi;
+
+  // --- Cập nhật: Thêm quan hệ ---
+
+  // Một sinh viên có thể có nhiều bản ghi tốt nghiệp
+  // "mappedBy = "sinhVien"" : trỏ tới tên trường "sinhVien" trong TotNghiep.java
+  @OneToMany(mappedBy = "sinhVien", fetch = FetchType.LAZY)
+  private List<TotNghiep> dsTotNghiep;
+
+  // Một sinh viên có thể có nhiều công việc
+  // "mappedBy = "sinhVien"" : trỏ tới tên trường "sinhVien" trong CongViec.java
+  @OneToMany(mappedBy = "sinhVien", fetch = FetchType.LAZY)
+  private List<CongViec> dsCongViec;
 }

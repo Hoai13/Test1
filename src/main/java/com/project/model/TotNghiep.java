@@ -28,7 +28,7 @@ public class TotNghiep {
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("maTruong") // Ánh xạ trường 'maTruong' trong TotNghiepId
   @JoinColumn(name = "MaTruong", insertable = false, updatable = false)
-  private Truong truong;
+  private TRUONG truong;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("maNganh") // Ánh xạ trường 'maNganh' trong TotNghiepId
